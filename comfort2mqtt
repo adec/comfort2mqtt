@@ -276,7 +276,7 @@ while (! $terminated)
 	{
 		$loggedIn = 0;
 
-		Print ("Connecting to ", MQTT_HOST, " ...");
+		Print ("Connecting to ", $mqttHost, " ...");
 		if (! $comfort->Connect())
 		{
 			Print "Could not connect.  Retrying ...";
