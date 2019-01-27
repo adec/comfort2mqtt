@@ -60,6 +60,9 @@ use constant COMFORT2MQTT_STATUS_TOPIC   => 'comfort2mqtt/status';
 use constant COMFORT2MQTT_STATUS_ONLINE  => 'online';
 use constant COMFORT2MQTT_STATUS_OFFLINE => 'offline';
 
+# Topics for communicating when phone rings
+use constant MQTT_PHONE_STATE_TOPIC  => 'phone/status';
+use constant MQTT_PHONE_LAST_CALL    => 'last_call';
 
 $0 = 'comfort2mqtt';
 
@@ -213,6 +216,7 @@ our %REPORT_TOPIC =
 	'O?'   => 'output',
 	'PT'   => 'pulse',
 	'PS'   => 'engineer_code',
+	'RP'   => 'phone_ring',
 );
 
 
@@ -371,6 +375,8 @@ while (! $terminated)
 		$comfort->SetReportCallback ('AR', \&ComfortAMARHandler);
 		$comfort->SetReportCallback ('EX', \&ComfortEXHandler);
 		$comfort->SetReportCallback ('PS', \&ComfortPSHandler);
+		$comfort->SetReportCallback ('RP', \&ComfortRPHandler);
+
 
 		Print ("Requesting alarm state ...");
 		foreach my $output (keys %RETAIN_OUTPUT)
@@ -961,6 +967,15 @@ sub ComfortPSHandler
 	my ($comfort, $type, $msg) = @_;
 
 	SendMqttReportMsg ([], $type, $msg ? 'ON' : 'OFF', 0);
+}
+
+
+sub ComfortRPHandler
+{
+	my ($comfort, $type, $msg) = @_;
+        my $isoDateTime = strftime('%FT%T%z', localtime);
+
+	SendMqttMsg ([ MQTT_PHONE_STATE_TOPIC ], MQTT_PHONE_LAST_CALL, $isoDateTime, 1);
 }
 
 

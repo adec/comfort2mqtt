@@ -173,7 +173,7 @@ our %ALARM_TYPES =
 );
 
 
-our @REPORTS = qw (IP CT AL AM AR MD ER BP BY OP PS EX PT IR IX);
+our @REPORTS = qw (IP CT AL AM AR MD ER BP BY OP PS EX PT IR IX RP);
 our %MSG_TYPES =
 (
 	'a?' => [ '(A2)(A2)(A4)(A2)*' ],
@@ -196,6 +196,7 @@ our %MSG_TYPES =
 	'O?' => [ '(A2)(A2)' ],
 	'PS' => [ '(A2)' ],
 	'PT' => [ '(A2)*' ],
+	'RP' => [ '' ],
 	'Z?' => [ '(A)*' ],
 );
 
