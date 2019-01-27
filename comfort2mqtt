@@ -1,4 +1,18 @@
 #!/usr/bin/perl
+#
+# comfort2mqtt - Comfort/MQTT Bridge to allow bidirectional communication
+# between Comfort and MQTT via a Comfort serial UCM.
+#
+# By default comfort2mqtt will make an unauthenticated connection to the MQTT
+# broker. If you wish to use an authenticated connection, either amend the 
+# MQTT_USER and MQTT_PASSWORD constants in the script or pass these 
+# parameters on the command line using the -u and -p options respectively.
+# You will also need to execute the following command before running this
+# script as secure connections to the MQTT broker (using TLS) are not supported
+# yet.
+#  
+#   export MQTT_SIMPLE_ALLOW_INSECURE_LOGIN=1
+#
 
 use strict;
 use warnings;
@@ -16,6 +30,8 @@ use constant COMFORT_PORT => '/dev/ttyUSB0';
 use constant COMFORT_RECEIVE_TIMEOUT => 100;
 use constant PASSWORD => '0000';
 use constant MQTT_HOST => 'localhost';
+use constant MQTT_USER => '';
+use constant MQTT_PASSWORD => '';
 use constant MQTT_COMFORT_PUBLISH_TOPIC => "comfort/status";
 use constant MQTT_COMFORT_SUBSCRIBE_TOPIC1 => "comfort/set";
 use constant MQTT_COMFORT_SUBSCRIBE_TOPIC2 => "comfort/get";
@@ -50,6 +66,8 @@ $0 = 'comfort2mqtt';
 our $daemon = 0;
 our $comfortPort;
 our $mqttHost;
+our $mqttUser;
+our $mqttPassword;
 our $logFileName;
 while (my $arg = shift @ARGV)
 {
@@ -69,11 +87,22 @@ while (my $arg = shift @ARGV)
 	{
 		$mqttHost = shift @ARGV;
 	}
+	elsif ($arg eq '-u')
+	{
+		$mqttUser = shift @ARGV;
+	}
+	elsif ($arg eq '-p')
+	{
+		$mqttPassword = shift @ARGV;
+	}
 }
 
 
 $comfortPort //= COMFORT_PORT;
 $mqttHost //= MQTT_HOST;
+$mqttUser //= MQTT_USER;
+$mqttPassword //= MQTT_PASSWORD;
+
 our %RETAIN_INPUT =
 (
 	 9 => 1,
@@ -240,6 +269,11 @@ $| = 1;
 
 
 our $mqtt = Net::MQTT::Simple->new ($mqttHost);
+if (length ($mqttUser) > 0)
+{
+	$mqtt->login ($mqttUser, $mqttPassword);
+}
+
 $mqtt->last_will (COMFORT2MQTT_STATUS_TOPIC, COMFORT2MQTT_STATUS_OFFLINE, 1);
 $mqtt->subscribe (MQTT_COMFORT_SUBSCRIBE_TOPIC1 . '/#', \&MqttComfortCallback);
 $mqtt->subscribe (MQTT_COMFORT_SUBSCRIBE_TOPIC2 . '/#', \&MqttComfortCallback);

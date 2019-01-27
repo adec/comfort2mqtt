@@ -6,3 +6,6 @@ This project's goal is to provide a simple Comfort/MQTT bridge (via a Comfort se
 
 It is currently very much a work in progress.
 
+By default comfort2mqtt will make an unauthenticated connection to the MQTT broker. If you wish to use an authenticated connection, either amend the MQTT_USER and MQTT_PASSWORD constants in the script or pass these parameters on the command line using the -u and -p options respectively. You will also need to set the MQTT_SIMPLE_ALLOW_INSECURE_LOGIN environment to 1 as the script currently does not support TLS.
+
+

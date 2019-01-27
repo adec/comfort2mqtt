@@ -20,7 +20,7 @@ case "$1" in
   start)
     echo "Starting comfort2mqtt"
     # run application you want to start
-    su -l -c "$COMFORT2MQTT_DIR/comfort2mqtt -d -log /var/log/comfort2mqtt/comfort2mqtt.log" pi
+    su -l -c "export MQTT_SIMPLE_ALLOW_INSECURE_LOGIN=1 && $COMFORT2MQTT_DIR/comfort2mqtt -d -log /var/log/comfort2mqtt/comfort2mqtt.log" pi
     ;;
   stop)
     echo "Stopping comfort2mqtt"
