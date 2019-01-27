@@ -260,7 +260,7 @@ sub Print (@)
 our $terminated = 0;
 $SIG{INT} = $SIG{QUIT} = $SIG{TERM} = sub
 {
-	Print "Termination signal recived...";
+	Print "Termination signal received...";
 	$terminated = 1;
 };
 
@@ -279,7 +279,7 @@ while (! $terminated)
 		Print ("Connecting to ", MQTT_HOST, " ...");
 		if (! $comfort->Connect())
 		{
-			Print "Coult no connect.  Retrying ...";
+			Print "Could not connect.  Retrying ...";
 			sleep (1);
 			next;
 		}
